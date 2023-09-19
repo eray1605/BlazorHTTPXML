@@ -1,0 +1,18 @@
+﻿@page "/api/posthandler"
+
+@code {
+    [Inject]
+    private IHttpContextAccessor httpContextAccessor { get; set; }
+
+    private async Task OnPostAsync()
+    {
+        var request = httpContextAccessor.HttpContext.Request;
+        var xmlData = await new System.IO.StreamReader(request.Body).ReadToEndAsync();
+
+        // Process the XML data as needed
+
+        // In this example, we simply return the received XML data as the response.
+        httpContextAccessor.HttpContext.Response.ContentType = "application/xml";
+        await httpContextAccessor.HttpContext.Response.WriteAsync(xmlData);
+    }
+}

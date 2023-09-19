@@ -1,0 +1,44 @@
+﻿@page "/"
+
+<h3>XML HTTP POST Example</h3>
+
+<button @onclick="SendXmlHttpPost">Send XML HTTP POST</button>
+
+@if (!string.IsNullOrEmpty(responseMessage))
+{
+    <h4>Response:</h4>
+    <pre>@responseMessage</pre>
+}
+
+@code {
+    private string responseMessage;
+
+    private async Task SendXmlHttpPost()
+    {
+        try
+        {
+            var xmlData = System.IO.File.ReadAllText("data.xml");
+
+            using (var httpClient = new HttpClient())
+            {
+                var content = new StringContent(xmlData, System.Text.Encoding.UTF8, "application/xml");
+
+                var response = await httpClient.PostAsync("https://localhost:7249", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    responseMessage = await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    responseMessage = $"Error: {response.StatusCode} - {response.ReasonPhrase}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            responseMessage = $"Error: {ex.Message}";
+        }
+    }
+}
+
